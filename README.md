@@ -637,5 +637,5 @@ ncu --profile-from-start off --metrics gpu__time_duration.sum,dram__bytes_read.s
 
 Example:
 ```bash
-gpu__time_duration.sum,dram__bytes_read.sum,dram__bytes_write.sum,smsp__sass_thread_inst_executed_op_fadd_pred_on.sum,smsp__sass_thread_inst_executed_op_fmul_pred_on.sum,smsp__sass_thread_inst_executed_op_ffma_pred_on.sum --csv --page raw --log-file resnet18_output.csv --target-processes all python main.py --dummy -a resnet18 --epochs 1 -b 1 --gpu 0
+ncu --profile-from-start off --metrics gpu__time_duration.sum,dram__bytes_read.sum,dram__bytes_write.sum,smsp__sass_thread_inst_executed_op_fadd_pred_on.sum,smsp__sass_thread_inst_executed_op_fmul_pred_on.sum,smsp__sass_thread_inst_executed_op_ffma_pred_on.sum --csv --page raw --log-file resnet18_output.csv --target-processes all python main.py --dummy -a resnet18 --epochs 1 -b 1 --gpu 0
 ```
