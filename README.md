@@ -17,6 +17,7 @@ ssh burst
 
 Start slurm job. Whats important here is the partition because that will dictate what GPU you're using. This commands starts an Nvidia a100 GPU. This can take up to 5 minutes sometimes.
 
+**This is the only command that worked for me:**
 ```bash
 srun --account=csci_ga_3033_085-2024fa --partition=c12m85-a100-1 --gres=gpu:1 --time=01:00:00 --pty /bin/bash
 ```
