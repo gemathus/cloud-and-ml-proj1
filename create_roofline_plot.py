@@ -38,27 +38,56 @@ peak_memory_bandwidth = 1500  # GB/s (example value)
 peak_computational_performance = 20  # TFLOPs (example value)
 
 # Create the roofline plot
-fig, ax = plt.subplots(figsize=(10, 6))
+# Set dark style with custom colors
+plt.style.use('dark_background')
+fig, ax = plt.subplots(figsize=(12, 8), facecolor='#1C1C1C')
+ax.set_facecolor('#1C1C1C')
 
-# Plot the roofline lines
-oi = np.logspace(-2, 2, 100)  # Operational intensity range
+# Plot the roofline lines with gradient
+oi = np.logspace(-2, 2, 200)  # More points for smoother lines
 memory_bound = oi * peak_memory_bandwidth
 compute_bound = [peak_computational_performance] * len(oi)
 
-ax.plot(oi, memory_bound, label="Memory Bandwidth (1500 GB/s)", linestyle="--", color="blue")
-ax.plot(oi, compute_bound, label="Compute Peak (20 TFLOPs)", linestyle="--", color="red")
+# Create gradient colors
+colors = plt.cm.plasma(np.linspace(0, 1, len(oi)))
+for i in range(len(oi)-1):
+    ax.plot(oi[i:i+2], memory_bound[i:i+2], color=colors[i], linewidth=2)
+    ax.plot(oi[i:i+2], compute_bound[i:i+2], color=colors[i], linewidth=2)
 
-# Plot data points
-ax.scatter(df["Operational Intensity"], df["Performance (GFLOPs)"], color="green", label="Kernels")
+# Plot data points with custom markers and sizes
+performance = df["Performance (GFLOPs)"]
+intensity = df["Operational Intensity"]
+sizes = np.log10(performance) * 100  # Size based on performance
+ax.scatter(intensity, performance, c='#FF69B4', s=sizes, alpha=0.6, 
+          marker='s', label="Compute Kernels", edgecolor='white')
 
-# Labels and legend
+# Get CSV filename without extension and convert to title case
+title = args.csv_file.replace(".csv", "").replace("-", " ").title()
+
+# Customize labels and appearance
 ax.set_xscale("log")
 ax.set_yscale("log")
-ax.set_xlabel("Operational Intensity (FLOPs/Byte)", fontsize=12)
-ax.set_ylabel("Performance (GFLOPs)", fontsize=12)
-ax.set_title("Roofline Model", fontsize=14)
-ax.legend()
-ax.grid(True, which="both", linestyle="--", linewidth=0.5)
+ax.set_xlabel("Operational Intensity (FLOPs/Byte)", fontsize=14, color='white')
+ax.set_ylabel("Performance (GFLOPs)", fontsize=14, color='white')
+ax.set_title(f"GPU Performance Roofline Analysis\n{title}", fontsize=16, color='white', pad=20)
+
+# Custom legend
+legend_elements = [
+    plt.Line2D([0], [0], color='#FF00FF', label='Memory Bandwidth Limit'),
+    plt.Line2D([0], [0], color='#00FFFF', label='Peak Compute Limit'),
+    plt.scatter([0], [0], c='#FF69B4', marker='s', s=100, 
+                label='Compute Kernels', edgecolor='white')
+]
+ax.legend(handles=legend_elements, loc='lower right', fontsize=12, 
+          facecolor='#1C1C1C', edgecolor='white')
+
+# Customize grid
+ax.grid(True, which="both", linestyle=':', alpha=0.3, color='gray')
+ax.spines['bottom'].set_color('white')
+ax.spines['top'].set_color('white') 
+ax.spines['right'].set_color('white')
+ax.spines['left'].set_color('white')
+ax.tick_params(colors='white')
 
 # Show plot
 plt.tight_layout()
